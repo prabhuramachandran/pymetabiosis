@@ -49,11 +49,9 @@ def install():
     Not removing the hook causes problems and segfaults when exiting the
     interpreter.
     """
+    add_numpy_converters()
 
     import_hook = PyMetabiosisHook()
     sys.meta_path.append(import_hook)
     import atexit
     atexit.register(lambda: sys.meta_path.remove(import_hook))
-
-add_numpy_converters()
-install()
