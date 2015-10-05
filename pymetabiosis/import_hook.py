@@ -37,21 +37,22 @@ class PyMetabiosisHook(object):
         return module
 
 
-def add_numpy_converters():
-    from pymetabiosis import numpy_convert
-    numpy_convert.register_pypy_cpy_ndarray_converters()
-    numpy_convert.register_cpy_numpy_to_pypy_builtin_converters()
-
-
 def install():
-    """Install the import_hook and automatically uninstall it at exit.
+    """Install the import_hook and return a function that removes the
+    hook when called (with no arguments).
 
     Not removing the hook causes problems and segfaults when exiting the
     interpreter.
     """
-    add_numpy_converters()
-
     import_hook = PyMetabiosisHook()
     sys.meta_path.append(import_hook)
+    return lambda: sys.meta_path.remove(import_hook)
+
+
+def auto():
+    """Automatically install the import hook and uninstall the hook
+    via atexit.
+    """
+    from pymetabiosis.import_hook import install
     import atexit
-    atexit.register(lambda: sys.meta_path.remove(import_hook))
+    atexit.register(install())
