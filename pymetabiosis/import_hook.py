@@ -53,6 +53,8 @@ def auto():
     """Automatically install the import hook and uninstall the hook
     via atexit.
     """
+    from pymetabiosis import numpy_convert
+    numpy_convert.register_pypy_cpy_ndarray_converters()
     from pymetabiosis.import_hook import install
     import atexit
     atexit.register(install())
